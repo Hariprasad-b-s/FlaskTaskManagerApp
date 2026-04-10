@@ -2,4 +2,6 @@ __pycache__/
 env
 .DS_Store
 static/.DS_Store
-templates/.DS_Store
+cattemplates/.DS_Store
+.venv/
+venv/
