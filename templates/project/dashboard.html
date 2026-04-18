@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Project Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="content" style="width: 760px;">
+    <h1 style="text-align: center">Project Dashboard</h1>
+    <p style="text-align: center;">
+        <a href="/">Go Back to Homepage</a>
+        <br>
+        <a href="/project/">Go Back to Project Tasks</a>
+    </p>
+
+    <div style="display: flex; gap: 12px; margin: 20px 0; justify-content: center; flex-wrap: wrap;">
+        <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; width: 210px; padding: 12px; text-align: center;">
+            <h3 style="margin: 0;">{{ total_tasks }}</h3>
+            <p style="margin: 6px 0 0 0;">Total Tasks</p>
+        </div>
+        <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; width: 210px; padding: 12px; text-align: center;">
+            <h3 style="margin: 0;">{{ overdue_tasks }}</h3>
+            <p style="margin: 6px 0 0 0;">Overdue Tasks</p>
+        </div>
+        <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; width: 210px; padding: 12px; text-align: center;">
+            <h3 style="margin: 0;">{{ no_due_date_tasks }}</h3>
+            <p style="margin: 6px 0 0 0;">No Due Date</p>
+        </div>
+    </div>
+
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+        <h3 style="text-align: center; margin-top: 0;">Tasks by Priority</h3>
+        <canvas id="priorityChart" height="120"></canvas>
+    </div>
+
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px;">
+        <h3 style="text-align: center; margin-top: 0;">Tasks by Category</h3>
+        <canvas id="categoryChart" height="120"></canvas>
+    </div>
+</div>
+
+<script>
+    const priorityLabels = {{ priority_labels | safe }};
+    const priorityValues = {{ priority_values | safe }};
+    const categoryLabels = {{ category_labels | safe }};
+    const categoryValues = {{ category_values | safe }};
+
+    new Chart(document.getElementById('priorityChart'), {
+        type: 'bar',
+        data: {
+            labels: priorityLabels,
+            datasets: [{
+                label: 'Tasks',
+                data: priorityValues,
+                backgroundColor: ['#e74c3c', '#f39c12', '#3498db']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'pie',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Tasks',
+                data: categoryValues,
+                backgroundColor: ['#16a085', '#8e44ad', '#2980b9', '#d35400', '#2c3e50', '#27ae60']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+{% endblock %}

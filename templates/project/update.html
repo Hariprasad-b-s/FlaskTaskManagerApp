@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Update Task</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Update Task</h1>
+    <p style="text-align: center;">
+        <a href="/project/">Go Back to Project</a>
+    </p>
+
+    {% if error %}
+    <div style="background-color: #f44336; color: white; padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="form">
+        <form action="/project/update/{{task.id}}" method="POST" enctype="multipart/form-data">
+            <div style="margin-bottom: 10px; text-align: center;">
+                <input type="text" name="content" id="content" value="{{task.content}}" maxlength="200" style="padding: 8px; width: 60%;">
+            </div>
+            <div style="margin-bottom: 10px; text-align: center;">
+                <label for="priority">Priority:</label>
+                <select name="priority" style="padding: 8px; margin-left: 10px;">
+                    <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px; text-align: center;">
+                <label for="category">Category:</label>
+                <select name="category" style="padding: 8px; margin-left: 10px;">
+                    <option value="Work" {% if task.category == 'Work' %}selected{% endif %}>Work</option>
+                    <option value="Personal" {% if task.category == 'Personal' %}selected{% endif %}>Personal</option>
+                    <option value="School" {% if task.category == 'School' %}selected{% endif %}>School</option>
+                    <option value="Other" {% if task.category == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px; text-align: center;">
+                <label for="due_date">Due Date:</label>
+                <input type="date" name="due_date" value="{{ task.due_date.isoformat() if task.due_date else '' }}" style="padding: 8px; margin-left: 10px;">
+            </div>
+            <div style="margin-bottom: 10px; text-align: center;">
+                <label for="image">Replace Image:</label>
+                <input type="file" name="image" accept="image/*" style="margin-left: 10px;">
+            </div>
+            {% if task.image_filename %}
+            <p style="text-align: center;">Current image: <a href="{{ url_for('static', filename='uploads/' + task.image_filename) }}" target="_blank">View</a></p>
+            {% endif %}
+            <div style="text-align: center;">
+                <input type="submit" value="Update">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Final Project</title>
+{% endblock %}
+
+{% block body %}
+<div class="project-page">
+    <section class="project-hero">
+        <h1>Final Project - Task Manager</h1>
+        <p>Track priorities, categories, due dates, and image-based context in one place.</p>
+        <div class="project-hero-links">
+            <a href="/">Home</a>
+            <a href="/project/dashboard/">Dashboard</a>
+            <a href="/project/export/csv">Export CSV</a>
+        </div>
+    </section>
+
+    {% if error %}
+    <div class="project-alert">{{ error }}</div>
+    {% endif %}
+
+    <section class="project-panel">
+        <h3>Filter Tasks</h3>
+        <form action="/project/" method="GET" class="project-filter-form">
+            <input type="text" name="search" placeholder="Search tasks..." value="{{ search_query }}">
+            <select name="sort">
+                <option value="date_asc" {% if sort_by == 'date_asc' %}selected{% endif %}>Oldest First</option>
+                <option value="date_desc" {% if sort_by == 'date_desc' %}selected{% endif %}>Newest First</option>
+                <option value="priority" {% if sort_by == 'priority' %}selected{% endif %}>By Priority</option>
+            </select>
+            <select name="priority">
+                <option value="All" {% if priority_filter == 'All' %}selected{% endif %}>All Priorities</option>
+                <option value="High" {% if priority_filter == 'High' %}selected{% endif %}>High</option>
+                <option value="Medium" {% if priority_filter == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Low" {% if priority_filter == 'Low' %}selected{% endif %}>Low</option>
+            </select>
+            <select name="category">
+                <option value="All" {% if category_filter == 'All' %}selected{% endif %}>All Categories</option>
+                <option value="Work" {% if category_filter == 'Work' %}selected{% endif %}>Work</option>
+                <option value="Personal" {% if category_filter == 'Personal' %}selected{% endif %}>Personal</option>
+                <option value="School" {% if category_filter == 'School' %}selected{% endif %}>School</option>
+                <option value="Other" {% if category_filter == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+            <button type="submit">Apply</button>
+        </form>
+    </section>
+
+    <section class="project-panel">
+        <h3>Task Board</h3>
+        {% if tasks|length < 1 %}
+        <h4 class="project-empty">No tasks yet. Add one below to get started.</h4>
+        {% else %}
+        <div class="project-table-wrap">
+            <table class="project-table">
+                <tr>
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Category</th>
+                    <th>Due Date</th>
+                    <th>Image</th>
+                    <th>Added</th>
+                    <th>Actions</th>
+                </tr>
+                {% for task in tasks %}
+                <tr class="task-row {% if task.due_date and task.due_date < today_date %}task-row-overdue{% endif %}">
+                    <td>{{ task.content }}</td>
+                    <td>
+                        <span class="priority-badge priority-{{ task.priority|lower }}">{{ task.priority }}</span>
+                    </td>
+                    <td>{{ task.category }}</td>
+                    <td>
+                        {% if task.due_date %}
+                            <span>{{ task.due_date }}</span>
+                            {% if task.due_date < today_date %}
+                                <span class="overdue-label">Overdue</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="muted-text">Not set</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.image_filename %}
+                            <a href="{{ url_for('static', filename='uploads/' + task.image_filename) }}" target="_blank" class="image-link">
+                                <img src="{{ url_for('static', filename='uploads/' + task.image_filename) }}" alt="Task image" class="task-thumb">
+                            </a>
+                        {% else %}
+                            <span class="muted-text">None</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ task.date_created.date() }}</td>
+                    <td>
+                        <a href="/project/update/{{task.id}}" class="action-link">Update</a>
+                        <a href="/project/delete/{{task.id}}" class="action-link delete">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="project-panel">
+        <h3>Add New Task</h3>
+        <form action="/project/" method="POST" enctype="multipart/form-data" class="project-add-form">
+            <input type="text" name="content" id="content" placeholder="Task title..." maxlength="200" required>
+            <div class="project-form-grid">
+                <label>
+                    Priority
+                    <select name="priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </label>
+                <label>
+                    Category
+                    <select name="category">
+                        <option value="Work">Work</option>
+                        <option value="Personal">Personal</option>
+                        <option value="School" selected>School</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label>
+                <label>
+                    Due Date
+                    <input type="date" name="due_date">
+                </label>
+                <label>
+                    Image
+                    <input type="file" name="image" accept="image/*">
+                </label>
+            </div>
+            <button type="submit" class="project-submit-btn">Add Task</button>
+        </form>
+    </section>
+</div>
+{% endblock %}
