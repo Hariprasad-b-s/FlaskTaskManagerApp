@@ -11,6 +11,23 @@
         <a href="/">Go Back to Homepage</a>
     </p>
 
+    {% if error %}
+    <div style="background-color: #f44336; color: white; padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 15px; text-align: center;">
+        <form action="/assignment/" method="GET" style="display: inline-block;">
+            <input type="text" name="search" placeholder="Search tasks..." value="{{ search_query }}" style="padding: 6px; width: 150px;">
+            <select name="sort" style="padding: 6px;">
+                <option value="date_asc" {% if sort_by == 'date_asc' %}selected{% endif %}>Oldest First</option>
+                <option value="date_desc" {% if sort_by == 'date_desc' %}selected{% endif %}>Newest First</option>
+            </select>
+            <input type="submit" value="Filter" style="padding: 6px 12px; cursor: pointer;">
+        </form>
+    </div>
+
     {% if tasks|length < 1 %}
     <h4 style="text-align: center">There are no tasks. Create one below!</h4>
     {% else %}
@@ -36,7 +53,7 @@
 
     <div class="form">
         <form action="/assignment/" method="POST">
-            <input type="text" name="content" id="content">
+            <input type="text" name="content" id="content" placeholder="Enter new task..." maxlength="200">
             <input type="submit" value="Add Task">
         </form>
     </div>

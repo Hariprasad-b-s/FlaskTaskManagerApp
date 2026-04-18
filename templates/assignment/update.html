@@ -11,9 +11,15 @@
         <a href="/assignment/">Go Back to Assignment</a>
     </p>
 
+    {% if error %}
+    <div style="background-color: #f44336; color: white; padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center;">
+        {{ error }}
+    </div>
+    {% endif %}
+
     <div class="form">
         <form action="/assignment/update/{{task.id}}" method="POST">
-            <input type="text" name="content" id="content" value="{{task.content}}">
+            <input type="text" name="content" id="content" value="{{task.content}}" maxlength="200">
             <input type="submit" value="Update">
         </form>
     </div>
